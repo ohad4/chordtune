@@ -1,0 +1,64 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 12px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.topbar__right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.topbar__mic-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  transition: all 0.2s;
+}
+
+.topbar__mic-btn--on {
+  background: linear-gradient(135deg, #00e5ff, #0066ff);
+}
+
+.topbar__mic-btn--on:hover {
+  opacity: 0.85;
+}
+
+.topbar__mic-btn--off {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.topbar__mic-btn--off:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.topbar__icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  transition: background 0.2s;
+}
+
+.topbar__icon-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}

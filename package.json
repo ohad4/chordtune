@@ -1,0 +1,31 @@
+{
+  "name": "chordtune",
+  "version": "1.0.0",
+  "main": "electron.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
+    "electron:build": "npm run build && electron-builder"
+  },
+  "build": {
+    "appId": "com.chordtune.app",
+    "productName": "ChordTune",
+    "files": ["dist/**/*", "electron.cjs"],
+    "win": { "target": "nsis" },
+    "mac": { "target": "dmg" }
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "concurrently": "^8.0.0",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0",
+    "wait-on": "^7.0.0",
+    "cross-env": "^7.0.3",
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  }
+}
