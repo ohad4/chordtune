@@ -1,6 +1,6 @@
 import sounddevice as sd
 import numpy as np
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import threading
 from collections import deque
@@ -30,6 +30,50 @@ latest_data = {
 audio_buffer = np.zeros(BUFFER_SIZE)
 lock = threading.Lock()
 mic_enabled = True
+current_device = None
+
+# מילות מפתח של התקנים שאינם מיקרופונים אמיתיים
+EXCLUDE_KEYWORDS = [
+    "mapper", "primary", "stereo mix", "what u hear",
+    "wave out", "loopback", "virtual", "output", "line in",
+    "sonar", "voicemeeter", "cable"
+]
+
+def get_input_devices():
+    """מחזיר רק מיקרופונים אמיתיים - ללא כפולות, מעדיף את השם הנקי ביותר"""
+    import re
+
+    EXCLUDE = [
+        "mapper", "primary sound", "stereo mix", "line in",
+        "sonar", "voicemeeter", "cable", "wave out", "loopback"
+    ]
+
+    # שלב 1: איסוף כל ההתקנים הרלוונטיים
+    candidates = []
+    for i, d in enumerate(sd.query_devices()):
+        if d["max_input_channels"] == 0:
+            continue
+        name = d["name"].strip()
+        if any(kw in name.lower() for kw in EXCLUDE):
+            continue
+
+        # חילוץ שם נקי מהסוגריים
+        brand_match = re.search(r'\(([^)]+)\)', name)
+        if brand_match:
+            brand = brand_match.group(1).strip()
+            brand = re.sub(r'^\d+[-\s]+', '', brand).strip()
+        else:
+            brand = name
+
+        candidates.append({"index": i, "name": brand})
+
+    # שלב 2: קיבוץ לפי מילת מפתח ראשונה ולקיחת האחרון (הנקי ביותר)
+    groups = {}
+    for c in candidates:
+        key = c["name"].lower().split()[0] if c["name"].split() else c["name"].lower()
+        groups[key] = c  # תמיד מחליף - האחרון מנצח
+
+    return list(groups.values())
 
 def smooth_freq(new_freq):
     if new_freq and new_freq > 0:
@@ -82,20 +126,40 @@ def audio_callback(indata, frames, time, status):
     audio_buffer = indata[:, 0].copy()
     threading.Thread(target=process_audio, args=(audio_buffer.copy(),), daemon=True).start()
 
-def start_audio_stream():
-    print("🎤 מיקרופון פעיל - מקשיב...")
-    with sd.InputStream(
-        samplerate=SAMPLE_RATE,
-        channels=1,
-        blocksize=BUFFER_SIZE,
-        callback=audio_callback
-    ):
-        sd.sleep(-1)
+def start_audio_stream(device=None):
+    print(f"🎤 מפעיל מיקרופון... (device={device})")
+    try:
+        with sd.InputStream(
+            samplerate=SAMPLE_RATE,
+            channels=1,
+            blocksize=BUFFER_SIZE,
+            device=device,
+            callback=audio_callback
+        ):
+            sd.sleep(-1)
+    except Exception as e:
+        print(f"שגיאה במיקרופון: {e}")
 
 @app.route("/data")
 def get_data():
     with lock:
         return jsonify(latest_data)
+
+@app.route("/devices")
+def get_devices():
+    devices = get_input_devices()
+    return jsonify({ "devices": devices, "current": current_device })
+
+@app.route("/devices/select", methods=["POST"])
+def select_device():
+    global current_device
+    data = request.get_json()
+    new_device = data.get("index")
+    current_device = new_device
+    freq_history.clear()
+    chord_history.clear()
+    threading.Thread(target=start_audio_stream, args=(new_device,), daemon=True).start()
+    return jsonify({ "success": True, "device": new_device })
 
 @app.route("/mic/on", methods=["POST"])
 def mic_on():
@@ -126,7 +190,7 @@ def get_status():
 
 if __name__ == "__main__":
     print("🚀 מפעיל ChordTune Python Server...")
-    audio_thread = threading.Thread(target=start_audio_stream, daemon=True)
+    audio_thread = threading.Thread(target=start_audio_stream, args=(current_device,), daemon=True)
     audio_thread.start()
     print("🌐 שרת פועל על http://localhost:5000")
     app.run(host="0.0.0.0", port=5000, debug=False)

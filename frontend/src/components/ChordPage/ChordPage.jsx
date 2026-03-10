@@ -2,24 +2,8 @@ import "./ChordPage.css"
 
 const NOTE_NAMES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
 
-// מיפוי אקורדים לפוזיציות על הגיטרה
-const FRET_POSITIONS = {
-  "C":     [{ string: 1, fret: 3 }, { string: 2, fret: 2 }, { string: 4, fret: 2 }],
-  "D":     [{ string: 0, fret: 2 }, { string: 1, fret: 3 }, { string: 2, fret: 2 }],
-  "E":     [{ string: 1, fret: 2 }, { string: 2, fret: 2 }, { string: 3, fret: 1 }],
-  "F":     [{ string: 1, fret: 3 }, { string: 2, fret: 3 }, { string: 3, fret: 2 }],
-  "G":     [{ string: 0, fret: 3 }, { string: 1, fret: 2 }, { string: 5, fret: 3 }],
-  "A":     [{ string: 1, fret: 2 }, { string: 2, fret: 2 }, { string: 3, fret: 2 }],
-  "B":     [{ string: 1, fret: 4 }, { string: 2, fret: 4 }, { string: 3, fret: 4 }],
-  "C#":    [{ string: 1, fret: 4 }, { string: 2, fret: 3 }, { string: 3, fret: 1 }],
-  "D#":    [{ string: 1, fret: 4 }, { string: 2, fret: 4 }, { string: 3, fret: 3 }],
-  "F#":    [{ string: 1, fret: 4 }, { string: 2, fret: 4 }, { string: 3, fret: 3 }],
-  "G#":    [{ string: 1, fret: 1 }, { string: 2, fret: 1 }, { string: 3, fret: 1 }],
-  "A#":    [{ string: 1, fret: 3 }, { string: 2, fret: 3 }, { string: 3, fret: 3 }],
-}
-
-// מיפוי אקורדים למקשי פסנתר
-const CHORD_KEYS = {
+// מרווחים לכל סוג אקורד
+const CHORD_INTERVALS = {
   "Major":  [0, 4, 7],
   "Minor":  [0, 3, 7],
   "7":      [0, 4, 7, 10],
@@ -32,25 +16,73 @@ const CHORD_KEYS = {
   "dim7":   [0, 3, 6, 9],
 }
 
-function getChordData(chord) {
-  if (!chord || chord.name === "--") {
-    return { frets: [], keys: [] }
-  }
+// פוזיציות גיטרה בסיסיות לכל תו (פרט אחד לכל תו - ניתן להרחיב)
+const BASE_FRET_SHAPES = {
+  "Major": {
+    "C":  [{ string: 1, fret: 3 }, { string: 2, fret: 2 }, { string: 4, fret: 2 }],
+    "C#": [{ string: 1, fret: 4 }, { string: 2, fret: 3 }, { string: 3, fret: 1 }, { string: 4, fret: 3 }],
+    "D":  [{ string: 0, fret: 2 }, { string: 1, fret: 3 }, { string: 2, fret: 2 }],
+    "D#": [{ string: 0, fret: 3 }, { string: 1, fret: 4 }, { string: 2, fret: 3 }],
+    "E":  [{ string: 1, fret: 2 }, { string: 2, fret: 2 }, { string: 3, fret: 1 }],
+    "F":  [{ string: 1, fret: 3 }, { string: 2, fret: 3 }, { string: 3, fret: 2 }, { string: 4, fret: 1 }],
+    "F#": [{ string: 1, fret: 4 }, { string: 2, fret: 4 }, { string: 3, fret: 3 }, { string: 4, fret: 2 }],
+    "G":  [{ string: 0, fret: 3 }, { string: 1, fret: 2 }, { string: 5, fret: 3 }],
+    "G#": [{ string: 0, fret: 4 }, { string: 1, fret: 3 }, { string: 5, fret: 4 }],
+    "A":  [{ string: 1, fret: 2 }, { string: 2, fret: 2 }, { string: 3, fret: 2 }],
+    "A#": [{ string: 1, fret: 3 }, { string: 2, fret: 3 }, { string: 3, fret: 3 }],
+    "B":  [{ string: 1, fret: 4 }, { string: 2, fret: 4 }, { string: 3, fret: 4 }],
+  },
+  "Minor": {
+    "C":  [{ string: 1, fret: 3 }, { string: 2, fret: 1 }, { string: 4, fret: 2 }],
+    "C#": [{ string: 1, fret: 4 }, { string: 2, fret: 2 }, { string: 3, fret: 1 }],
+    "D":  [{ string: 0, fret: 1 }, { string: 1, fret: 3 }, { string: 2, fret: 2 }],
+    "D#": [{ string: 0, fret: 2 }, { string: 1, fret: 4 }, { string: 2, fret: 3 }],
+    "E":  [{ string: 2, fret: 2 }, { string: 3, fret: 2 }],
+    "F":  [{ string: 1, fret: 3 }, { string: 2, fret: 1 }, { string: 3, fret: 1 }],
+    "F#": [{ string: 1, fret: 4 }, { string: 2, fret: 2 }, { string: 3, fret: 2 }],
+    "G":  [{ string: 0, fret: 3 }, { string: 4, fret: 1 }, { string: 5, fret: 3 }],
+    "G#": [{ string: 0, fret: 4 }, { string: 4, fret: 2 }, { string: 5, fret: 4 }],
+    "A":  [{ string: 1, fret: 2 }, { string: 2, fret: 2 }, { string: 4, fret: 2 }],
+    "A#": [{ string: 1, fret: 3 }, { string: 2, fret: 3 }, { string: 4, fret: 3 }],
+    "B":  [{ string: 1, fret: 4 }, { string: 2, fret: 4 }, { string: 4, fret: 4 }],
+  },
+  "7": {
+    "C":  [{ string: 1, fret: 3 }, { string: 2, fret: 2 }, { string: 3, fret: 3 }, { string: 4, fret: 2 }],
+    "C#": [{ string: 1, fret: 4 }, { string: 2, fret: 3 }, { string: 3, fret: 4 }],
+    "D":  [{ string: 0, fret: 2 }, { string: 1, fret: 1 }, { string: 2, fret: 2 }],
+    "D#": [{ string: 0, fret: 3 }, { string: 1, fret: 2 }, { string: 2, fret: 3 }],
+    "E":  [{ string: 1, fret: 2 }, { string: 3, fret: 1 }],
+    "F":  [{ string: 1, fret: 3 }, { string: 2, fret: 3 }, { string: 3, fret: 2 }],
+    "F#": [{ string: 1, fret: 4 }, { string: 2, fret: 4 }, { string: 3, fret: 3 }],
+    "G":  [{ string: 0, fret: 3 }, { string: 1, fret: 2 }, { string: 4, fret: 1 }],
+    "G#": [{ string: 0, fret: 4 }, { string: 1, fret: 3 }, { string: 4, fret: 2 }],
+    "A":  [{ string: 1, fret: 2 }, { string: 2, fret: 2 }, { string: 3, fret: 2 }, { string: 4, fret: 2 }],
+    "A#": [{ string: 1, fret: 3 }, { string: 2, fret: 3 }, { string: 4, fret: 3 }],
+    "B":  [{ string: 1, fret: 4 }, { string: 2, fret: 4 }, { string: 4, fret: 4 }],
+  },
+}
 
-  // חילוץ תו בסיס וסוג אקורד
+function getFrets(root, chordType) {
+  const shape = BASE_FRET_SHAPES[chordType] || BASE_FRET_SHAPES["Major"]
+  return shape[root] || BASE_FRET_SHAPES["Major"][root] || []
+}
+
+function getKeys(root, chordType) {
+  const rootIndex = NOTE_NAMES.indexOf(root)
+  if (rootIndex < 0) return []
+  const intervals = CHORD_INTERVALS[chordType] || CHORD_INTERVALS["Major"]
+  return intervals.map(i => (rootIndex + i) % 12)
+}
+
+function getChordData(chord) {
+  if (!chord || chord.name === "--") return { frets: [], keys: [] }
   const root = chord.root || "--"
   const chordName = chord.name || "--"
   const chordType = chordName.replace(root, "").trim() || "Major"
-
-  // פוזיציות גיטרה
-  const frets = FRET_POSITIONS[root] || []
-
-  // מקשי פסנתר - חישוב לפי תו הבסיס
-  const rootIndex = NOTE_NAMES.indexOf(root)
-  const intervals = CHORD_KEYS[chordType] || CHORD_KEYS["Major"]
-  const keys = rootIndex >= 0 ? intervals.map(i => (rootIndex + i) % 12) : []
-
-  return { frets, keys }
+  return {
+    frets: getFrets(root, chordType),
+    keys: getKeys(root, chordType),
+  }
 }
 
 function WaveformBg() {
@@ -59,7 +91,6 @@ function WaveformBg() {
     const y = 50 + Math.sin(i * 0.4) * 12 + Math.sin(i * 0.9) * 6
     return `${x},${y}`
   }).join(" ")
-
   return (
     <svg className="chord__waveform" preserveAspectRatio="none">
       <polyline points={points} fill="none" stroke="#00e5ff" strokeWidth="1.5" />
@@ -72,7 +103,6 @@ function Fretboard({ dots }) {
   const sw = 260, sh = 120
   const fretW = sw / frets
   const stringH = sh / (strings - 1)
-
   return (
     <svg width={sw} height={sh + 10} style={{ display: "block" }}>
       {Array.from({ length: frets + 1 }).map((_, i) => (
@@ -108,7 +138,6 @@ function PianoKeys({ activeKeys }) {
   const blackNotes = [1, 3, 6, 8, 10]
   const keyW = 42, keyH = 90
   const totalW = whites.length * keyW
-
   return (
     <svg width={totalW} height={keyH + 10} style={{ display: "block" }}>
       {whites.map((note, i) => (
@@ -143,20 +172,16 @@ export default function ChordPage({ chord }) {
 
   return (
     <div className="chord">
-      {/* Main chord display */}
       <div className="chord__display">
         <WaveformBg />
         <div className="chord__detected-label">DETECTED CHORD</div>
-        <div className="chord__name">
-          {hasChord ? chord.name : "--"}
-        </div>
+        <div className="chord__name">{hasChord ? chord.name : "--"}</div>
         <div className="chord__tags">
           <span className="chord__tag">ROOT: {chord?.root || "--"}</span>
           <span className="chord__tag">INTERVALS: {chord?.intervals || "--"}</span>
         </div>
       </div>
 
-      {/* Bottom panels */}
       <div className="chord__panels">
         <div className="chord__panel">
           <div className="chord__panel-header">
@@ -164,7 +189,6 @@ export default function ChordPage({ chord }) {
           </div>
           <Fretboard dots={frets} />
         </div>
-
         <div className="chord__panel">
           <div className="chord__panel-header">
             <span className="chord__panel-title">🎹 Piano Keys</span>
@@ -173,7 +197,6 @@ export default function ChordPage({ chord }) {
         </div>
       </div>
 
-      {/* Footer */}
       <div className="chord__footer">
         <span className="chord__footer-status">
           <span className="chord__footer-dot">●</span> Playing in 440Hz standard tuning
