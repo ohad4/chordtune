@@ -30,17 +30,17 @@ export default function Settings({ onClose }) {
     <div className="settings-overlay" onClick={onClose}>
       <div className="settings-modal" onClick={e => e.stopPropagation()}>
         <div className="settings-modal__header">
-          <span className="settings-modal__title">⚙ הגדרות</span>
-          <button className="settings-modal__close" onClick={onClose}>✕</button>
+          <span className="settings-modal__title">Settings</span>
+          <button className="settings-modal__close" onClick={onClose}>x</button>
         </div>
 
         <div className="settings-modal__section">
-          <div className="settings-modal__section-title">🎤 בחר מיקרופון</div>
+          <div className="settings-modal__section-title">Select Microphone</div>
 
           {loading ? (
-            <div className="settings-modal__loading">טוען מיקרופונים...</div>
+            <div className="settings-modal__loading">Loading microphones...</div>
           ) : devices.length === 0 ? (
-            <div className="settings-modal__loading">לא נמצאו מיקרופונים</div>
+            <div className="settings-modal__loading">No microphones found</div>
           ) : (
             <div className="settings-modal__devices">
               {devices.map(device => (

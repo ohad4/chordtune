@@ -12,7 +12,7 @@ export default function TopBar() {
       await fetch(endpoint, { method: "POST" })
       setMicOn(!micOn)
     } catch (e) {
-      console.error("לא ניתן להתחבר לשרת Python")
+      console.error("Cannot connect to Python server")
     }
   }
 
@@ -24,7 +24,7 @@ export default function TopBar() {
             className={`topbar__mic-btn ${micOn ? "topbar__mic-btn--on" : "topbar__mic-btn--off"}`}
             onClick={toggleMic}
           >
-            {micOn ? "🎤 Microphone: ON" : "🔇 Microphone: OFF"}
+            {micOn ? "Microphone: ON" : "Microphone: OFF"}
           </button>
           <button className="topbar__icon-btn" onClick={() => setShowSettings(true)}>⚙</button>
         </div>

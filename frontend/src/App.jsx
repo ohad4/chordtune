@@ -20,7 +20,7 @@ export default function App() {
   const [volume, setVolume] = useState(0)
   const [listening, setListening] = useState(false)
 
-  // חיבור ל-Python API
+  // Connect to Python API
   useEffect(() => {
     const interval = setInterval(async () => {
       try {

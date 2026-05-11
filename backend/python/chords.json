@@ -1,0 +1,26 @@
+{
+  "templates": {
+    "Major":  [0, 4, 7],
+    "Minor":  [0, 3, 7],
+    "7":      [0, 4, 7, 10],
+    "maj7":   [0, 4, 7, 11],
+    "m7":     [0, 3, 7, 10],
+    "dim":    [0, 3, 6],
+    "aug":    [0, 4, 8],
+    "sus2":   [0, 2, 7],
+    "sus4":   [0, 5, 7],
+    "dim7":   [0, 3, 6, 9]
+  },
+  "info": {
+    "Major":  {"intervals": "1-3-5"},
+    "Minor":  {"intervals": "1-b3-5"},
+    "7":      {"intervals": "1-3-5-b7"},
+    "maj7":   {"intervals": "1-3-5-7"},
+    "m7":     {"intervals": "1-b3-5-b7"},
+    "dim":    {"intervals": "1-b3-b5"},
+    "aug":    {"intervals": "1-3-#5"},
+    "sus2":   {"intervals": "1-2-5"},
+    "sus4":   {"intervals": "1-4-5"},
+    "dim7":   {"intervals": "1-b3-b5-bb7"}
+  }
+}

@@ -67,7 +67,6 @@ export default function TunerPage({ tuning, setTuning, activeString, setActiveSt
 
   return (
     <div className="tuner">
-      {/* Tuning selector */}
       <div className="tuner__tuning-row">
         {["Standard", "Drop D", "Open G"].map(t => (
           <button
@@ -80,11 +79,9 @@ export default function TunerPage({ tuning, setTuning, activeString, setActiveSt
         ))}
       </div>
 
-      {/* Dial */}
       <div className="tuner__dial-area">
         <TunerDial cents={cents} />
 
-        {/* Note */}
         <div className="tuner__note">
           {hasData ? (
             <>
@@ -96,12 +93,11 @@ export default function TunerPage({ tuning, setTuning, activeString, setActiveSt
           ) : (
             <>
               <div className="tuner__note-name tuner__note-name--waiting">--</div>
-              <div className="tuner__note-freq">נגן תו כדי להתחיל</div>
+              <div className="tuner__note-freq">Play a note to start</div>
             </>
           )}
         </div>
 
-        {/* Cents */}
         <div className="tuner__cents-box">
           <div className="tuner__cents-row">
             <span className="tuner__cents-side-label">FLAT</span>
@@ -129,7 +125,6 @@ export default function TunerPage({ tuning, setTuning, activeString, setActiveSt
         </div>
       </div>
 
-      {/* Strings */}
       <div className="tuner__strings">
         {STRINGS.map((s, i) => (
           <div key={i} className="tuner__string" onClick={() => setActiveString(i)}>
@@ -142,7 +137,6 @@ export default function TunerPage({ tuning, setTuning, activeString, setActiveSt
         ))}
       </div>
 
-      {/* Footer */}
       <div className="tuner__footer">
         <span className="tuner__footer-status">
           <span className="tuner__footer-dot">●</span> Playing in 440Hz standard tuning

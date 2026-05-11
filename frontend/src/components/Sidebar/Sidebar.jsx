@@ -1,16 +1,13 @@
 import "./Sidebar.css"
 
-export default function Sidebar({ page, setPage, chordName, accuracy, onReset }) {
+export default function Sidebar({ page, setPage, chordName, onReset }) {
   return (
     <div className="sidebar">
-      {/* Logo */}
       <div className="sidebar__logo">
         <div className="sidebar__logo-icon">♪</div>
         <div className="sidebar__logo-text">ChordTune</div>
       </div>
 
-
-      {/* Nav */}
       {[
         { id: "tuner", icon: "♬", label: "Tuner" },
         { id: "chord", icon: "⬡", label: "Chord Detector" },
@@ -25,7 +22,6 @@ export default function Sidebar({ page, setPage, chordName, accuracy, onReset })
         </div>
       ))}
 
-      {/* Currently Playing */}
       <div className="sidebar__currently-playing">
         <div className="sidebar__playing-label">CURRENTLY PLAYING</div>
         <div className="sidebar__playing-name">{chordName}</div>
