@@ -5,7 +5,7 @@ from scipy.signal import butter, sosfilt
 MIN_FREQ = 70    # Hz - below this is noise (low E string = 82Hz)
 MAX_FREQ = 4200  # Hz - above this is electronic noise
 
-SAMPLE_RATE = 44100
+SAMPLE_RATE = 48000
 
 def butter_highpass(cutoff, fs, order=4):
     """Creates a High-Pass filter - removes frequencies that are too low"""

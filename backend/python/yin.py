@@ -1,6 +1,6 @@
 import numpy as np
 
-SAMPLE_RATE = 44100
+SAMPLE_RATE = 48000
 
 # Frequency search range
 MIN_FREQ = 70    # Hz
